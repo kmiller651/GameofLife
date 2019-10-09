@@ -9,6 +9,10 @@ var tableSize = 256;
 var tableState = [];
 var newTableState = [];
 var round = 1;
+function genNum() {
+	randomNum = Math.floor(Math.random()*(64-(-64)+1))+(-64);
+	console.log(randomNum)
+}// for genNum
 function reviewState() {
 	var cStateDiv = document.getElementById("cstate")
 	var tStateDiv = document.getElementById("table")
@@ -18,10 +22,17 @@ function reviewState() {
 
 function display() {
 	var table = "<table>"+
+	var cellState = 0;
+	var cellCount = 0;
 	// This will allow the user to click the column and add a live state to all cells in the column
 		//"<td><th><button onClick=/"chooseColumn(0);\">
 	for (var row=0;row<128;row++) {
-		table+="<tr><td>"+tableState[0][row]+"</td><td>"+tableState[1]
+		for (var col=0;col<128;col++) {
+			cellCount += ((arr[col][row]/64)+ genNum());
+			} // find middle of column and a random cell
+			
+			
+			// to finish this, look at the eLearning demo html for random cells.
 </script>
 
 </head>
