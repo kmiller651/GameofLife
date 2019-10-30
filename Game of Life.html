@@ -5,41 +5,122 @@
 <meta charset="UTF-8">
 <meta name="author" content="Kenneth Miller" />
 <script type="text/javascript">
-var tableSize = 256;
-var tableState = [];
-var newTableState = [];
-var round = 1;
-function genNum() {
-	randomNum = Math.floor(Math.random()*(64-(-64)+1))+(-64);
-	console.log(randomNum)
-}// for genNum
-function reviewState() {
-	var cStateDiv = document.getElementById("cstate")
-	var tStateDiv = document.getElementById("table")
-//	if (cstate = alive
-	
-} // for main
+function gamePlay() {
+	this.seed = function (width,height) {
+		this.board = new Array(height);
+		for (var row=0;row<height;row++) {
+			this.board[row] = new Array(width);
+			for (var col=0;col<width;col++) {
+				this.board[row][col] = Math.round(Math.random());
+			}
+		} // Creates the initial seed, with a random amount of cells that are alive.
+	}
 
-function display() {
-	var table = "<table>"+
-	var cellState = 0;
-	var cellCount = 0;
-	// This will allow the user to click the column and add a live state to all cells in the column
-		//"<td><th><button onClick=/"chooseColumn(0);\">
-	for (var row=0;row<128;row++) {
-		for (var col=0;col<128;col++) {
-			cellCount += ((arr[col][row]/64)+ genNum());
-			} // find middle of column and a random cell
+
+	this.newState = function() {
+		this.seedDataNext = new Array(this.board.length);
+		for (var i = 0; i < this.board.length; i++) {
+			this.seedDataNext[i] = new Array(this.board[i].length);
+		}
+		for (var rowCtr=0;rowCtr<this.board.length;rowCtr++) {
+			for (var colCtr=0;colCtr<this.board.length;colCtr++) {
+				var state = 0;
+				for (var dx = -1;dx <=1; dx++) {
+					for (var dy = -1;dy <=1; dy++) {
+						if (dx == 0 && dy == 0){}
+						else if (typeof this.board[rowCtr+dx] !== 'undefined'
+							&& typeof this.board[rowCtr+dx][colCtr+dy] !== 'undefined'
+							&& this.board[rowCtr+dx][colCtr+dy]) {
+						state++;
+						} /* (typeof learned from w3schools.com) Takes the initial seed board state, and creates a variable (state), which then passes through
+								the switch cases to determine if the cell remains alive or dies.
+						*/
+					}
+				}
+				var c = this.board[rowCtr][colCtr];
+				switch (state) {
+					case 0:
+					case 1:
+						c = 0;
+						break;
+					case 2:
+						break;
+					case 3:
+						c = 1;
+						break;
+					default:
+						c = 0;
+				} /* (switch learned from w3schools.com) If the state increments beyond case 3, it will revert to default case of 0. No break is needed if default is last.
+				C determines the state of the cells on the next data seed.  
+				*/
+				this.seedDataNext[rowCtr][colCtr] = c;
+			}
+		}
+		this.board = this.seedDataNext.slice();
+		// Puts the new state of the board of what cells died, and became alive onto the current board.
+	}
+
+
+	this.print = function (ctx,w,h) {
+			if (!w)
+				w = 128;
+			if (!h)
+				h = 128;
+			for (var x=0; x<this.board.length; x++) {
+				var l = "";
+				for (var y=0;y<this.board[x].length;y++) {
+					if (this.board[x][y])
+						ctx.fillStyle = "orange";
+						// this randomly fills the alive cells with the orange color, using the Math.floor(Math.random()) function at the beginning, if one of the cells is not included in this equation, it remains dead.
+					else
+						ctx.fillStyle = "black";
+					ctx.fillRect(y*h,x*w,h,w);
+				} // The canvas size is determined by the w and h values (grid size)
+			}
+	}
+	
+
+}
+
+function gameInit() {
+	var play = new gamePlay();
+	play.seed(128,128);
+	// Get canvas contexts or return 1
+	grid.canvas = document.getElementById('grid');
+	if (grid.canvas.getContext) {
+		grid.ctx = grid.canvas.getContext('2d');
+	} else {
+		return 1;
+	}
+ 
+ 
+	/* Information learned from W3schools.com At 250 milliseconds, this function runs the game and refreshes the board. The w and h represent multiplicative values for the width and height of the canvas (to x and y)
+	The higher the w and h values, the greater the size of the fill.
+	*/
+	setInterval(function(){run(play,grid.ctx,8,8)},250);
+	return 0;
+} // for gameInit()
+
+function run(game,ctx,w,h) {
+	game.print(ctx,w,h);
+	game.newState()
+ 
+	return 0;
+} // Function used in gameInit() in which the entire gamePlay function is refreshed every 250 milliseconds, and printed to the canvas.
 			
-			
-			// to finish this, look at the eLearning demo html for random cells.
+// Information for entire random seed generating, refreshing and printing to a canvas learned from Rosettacode.org 
 </script>
 
 </head>
-<body onLoad="main();">
-<div id="table">
-
-</div>
+<body onLoad="gameInit();" style="text-align: center;">
+<!-- Initially loads the gameInit function on page start -->
+<h1 style="text-align: center; border-bottom:1px solid black; padding:15px;">Conway's Game of Life</h1>
+<br> 
+<button onClick="">Make a random column alive!</button>
+<br>
+<canvas id="grid" width="450" height="450" style="padding: 30px;">
+</canvas><br>
+<!-- This is the blank canvas that is given it's input by the print and gameInit functions (learned from rosettacode.org) -->
+<p style="padding: 10px;">By:Kenneth Miller</p>
 </body>
-<!-- By default this is quadratic asymptonic algorithm, find a way to improve efficiency -->
 </html>
